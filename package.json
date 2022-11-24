@@ -1,14 +1,24 @@
 {
   "name": "project",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "start-server": "node index.js"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mayank-TN/Nodejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mayank-TN/Nodejs/issues"
+  },
+  "homepage": "https://github.com/Mayank-TN/Nodejs#readme",
+  "description": "",
+  "devDependencies": {
     "nodemon": "^2.0.20"
   }
 }
