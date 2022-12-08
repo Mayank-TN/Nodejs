@@ -14,11 +14,17 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(null , title, imageUrl, description, price);
-  product.save().then( ()=>{
-    res.redirect('/')
-  });
-  
+  Product.create({
+    title : title ,
+    price : price ,
+    imageUrl : imageUrl ,
+    description : description
+  }).then(
+    (result)=>{
+      console.log("Product Created")
+      res.redirect('/')
+    })
+    .catch(err=>console.log(err))
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -27,7 +33,7 @@ exports.getEditProduct = (req, res, next) => {
   if(!editMode){
     return res.redirect('/')
   }
-  Product.findById(productId , (product)=>{
+  Product.findByPk(productId).then((product)=>{
     if(!product){
       return res.redirect('/')
     }
@@ -42,16 +48,28 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req,res,next)=>{
   const prodId = req.body.productId
-  const updatedProd = new Product(prodId , req.body.title , req.body.imageUrl , req.body.description , req.body.price)
-  updatedProd.save();
-  res.redirect('/admin/products')
-
+  Product.findByPk(prodId).then((product)=>{
+    product.title = req.body.title ,
+    product.imageUrl = req.body.imageUrl , 
+    product.description = req.body.description , 
+    product.price = req.body.price
+    return product.save();
+  })
+  .then(()=>{
+    console.log("Update Product")
+    res.redirect('/admin/products')
+  })
+  .catch(err=>console.log(err))
 }
 
 exports.postDeleteProduct = (req,res,next)=>{
   const prodId = req.params.id
-  Product.deleteById(prodId)
-  .then( ()=>{
+  Product.findByPk(prodId)
+  .then( (product)=>{
+    return product.destroy()
+  })
+  .then((result)=>{
+    console.log('Product Deleted')
     res.redirect('/admin/products')
   })
   .catch(err=>console.log(err))
@@ -59,7 +77,7 @@ exports.postDeleteProduct = (req,res,next)=>{
 
 exports.getProducts = async (req, res, next) => {
 
-  const [products, fieldData] = await Product.fetchAll();
+  const products = await Product.findAll();
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin Products',
